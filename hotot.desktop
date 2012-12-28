@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Hotot
+Comment=Lightweight and Flexible Microblogging Client
+GenericName=Hotot
+Keywords=Hotot;Twitter;
+
+Exec=/usr/share/hotot/icons/22x22/apps/hotot.png
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=hotot
+Categories=Application;Network;Microblogging;Twitter;
+StartupNotify=true
+Actions=Tweet;
+
+[Desktop Action Tweet]
+Name=Tweet
+Name[de]=Neuen Tweet erstellen
+
+Exec=hotot
+OnlyShowIn=Messaging Menu;Unity;
