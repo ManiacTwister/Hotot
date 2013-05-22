@@ -130,3 +130,14 @@ endif()
 
 add_subdirectory(po)
 add_subdirectory(misc)
+
+install(FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/hotot.desktop"
+  DESTINATION /usr/share/applications)
+install(FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/hotot.indicator"
+  DESTINATION /usr/share/indicators/messages/applications
+  RENAME hotot)
+install(FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/data/icons/22x22/apps/hotot.png"
+  DESTINATION /usr/share/icons) 
