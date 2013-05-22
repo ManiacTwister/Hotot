@@ -5,11 +5,11 @@ Comment=Lightweight and Flexible Microblogging Client
 GenericName=Hotot
 Keywords=Hotot;Twitter;
 
-Exec=/usr/share/hotot/icons/22x22/apps/hotot.png
+Exec=hotot
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=hotot
+Icon=/usr/share/hotot/icons/22x22/apps/hotot.png
 Categories=Application;Network;Microblogging;Twitter;
 StartupNotify=true
 Actions=Tweet;
