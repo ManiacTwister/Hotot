@@ -27,6 +27,30 @@ else:
 if __import__('os').environ.get('DESKTOP_SESSION') in ('gnome-2d', 'classic-gnome'):
     HAS_INDICATOR = False
 
+# Try to initalize indicator messages (MeMenu)
+try:
+    import indicate
+except ImportError:
+    HAS_MEMENU = False
+else:
+    HAS_MEMENU = True
+
+    from time import time
+    label = "Unread Tweets"
+
+    # Indicator server
+    ind_server = indicate.indicate_server_ref_default()
+    ind_server.set_type("message.im")
+    ind_server.set_desktop_file("/usr/share/applications/hotot.desktop")
+
+    # Indicator
+    indicator_unread = indicate.Indicator()
+    indicator_unread.set_property("name", label)
+    indicator_unread.set_property("count", "0")
+    indicator_unread.set_property("draw-attention", "false");
+    indicator_unread.label = label
+    indicator_unread.show()
+
 
 try: import i18n
 except: from gettext import gettext as _
@@ -172,10 +196,23 @@ class Hotot:
         self.webv.execute_script('update_status("%s")' % text)
 
     def unread_alert(self, subtype, sender, body="", count=0):
+        if HAS_MEMENU:
+            global indicator_unread
+
         if count > 0:
             self.start_blinking()
+
+            # Set unread tweet count (MeMenu)
+            if HAS_MEMENU:
+                indicator_unread.set_property("draw-attention", "true");
+                indicator_unread.set_property("count", str(count))
         else:
             self.stop_blinking()
+
+            # Set unread tweet count (MeMenu)
+            if HAS_MEMENU:
+                indicator_unread.set_property("draw-attention", "false");
+                indicator_unread.set_property("count", str(0))
 
         if not HAS_INDICATOR:
             self.trayicon.set_tooltip("Hotot: %d unread tweets/messages." % count if count > 0 else _("Hotot: Click to Active."))
@@ -233,7 +270,11 @@ class Hotot:
             self.btn_update.clicked();
             entry.stop_emission('insert-text')
 
-    def on_mitem_resume_activate(self, item):
+    # MessagingMenu API calls the activate function with three arguments (MeMenu)
+    def on_mitem_resume_activate(self, item, data=None):
+        global indicator_unread
+        indicator_unread.set_property("draw-attention", "false");
+        indicator_unread.set_property("count", str(0))
         self.window.present()
 
     def on_mitem_prefs_activate(self, item):
@@ -398,6 +439,11 @@ def main():
         indicator.set_menu(app.menu_tray)
         app.indicator = indicator
 
+    # Set display functions (MeMenu)
+    if HAS_MEMENU:
+        global ind_server, indicator_unread
+        ind_server.connect("server-display", app.on_mitem_resume_activate)
+        indicator_unread.connect("user-display", app.on_mitem_resume_activate) 
 
     gtk.gdk.threads_enter()
     gtk.main()
